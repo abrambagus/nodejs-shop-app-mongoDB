@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csrf");
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
@@ -17,6 +18,8 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: "sessions",
 });
+
+const tokens = new csrf();
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -36,6 +39,28 @@ app.use(
   })
 );
 
+// CSRF protection middleware
+app.use((req, res, next) => {
+  if (
+    req.method === "GET" ||
+    req.method === "HEAD" ||
+    req.method === "OPTIONS"
+  ) {
+    return next();
+  }
+
+  const token = req.body._csrf || req.headers["x-csrf-token"];
+  const secret = req.session.csrfSecret;
+
+  if (!secret || !tokens.verify(secret, token)) {
+    const error = new Error("Invalid CSRF token");
+    error.statusCode = 403;
+    return next(error);
+  }
+
+  next();
+});
+
 app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
@@ -46,6 +71,18 @@ app.use((req, res, next) => {
       next();
     })
     .catch((err) => console.log(err));
+});
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+
+  // Generate CSRF token
+  if (!req.session.csrfSecret) {
+    req.session.csrfSecret = tokens.secretSync();
+  }
+  res.locals.csrfToken = tokens.create(req.session.csrfSecret);
+
+  next();
 });
 
 app.use("/admin", adminRoutes);
