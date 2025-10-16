@@ -4,7 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session);
+const MongoStore = require("connect-mongo");
 const csrf = require("csrf");
 const flash = require("connect-flash");
 const multer = require("multer");
@@ -16,9 +16,9 @@ const MONGODB_URI =
   "mongodb+srv://abrambagus_db_user:Le8JaOB7qFK7b175@cluster0.d1jikx7.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true&tlsAllowInvalidHostnames=true";
 
 const app = express();
-const store = new MongoDBStore({
-  uri: MONGODB_URI,
-  collection: "sessions",
+const store = MongoStore.create({
+  mongoUrl: MONGODB_URI,
+  collectionName: "sessions",
 });
 
 const tokens = new csrf();
@@ -57,6 +57,7 @@ app.use(
 );
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/images", express.static(path.join(__dirname, "images")));
+
 app.use(
   session({
     secret: "my secret",

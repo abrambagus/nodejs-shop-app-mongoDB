@@ -33,13 +33,13 @@
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                                         <button class="btn" type="submit">Delete</button>
                                     </form>
-
                                 </div>
                             </article>
-                            <% } %>
-                    </div>
-                    <% } else { %>
-                        <h1>No Products Found!</h1>
                         <% } %>
+                    </div>
+                <% } else { %>
+                    <h1>No Products Found!</h1>
+                <% } %>
             </main>
             <%- include('../includes/end.ejs') %>
+            <script src="/js/admin.js"></script>
