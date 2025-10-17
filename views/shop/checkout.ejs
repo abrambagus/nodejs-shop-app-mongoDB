@@ -16,5 +16,16 @@
             <div class="centered">
                 <h2>Total: <%= totalSum %></h2>
             </div>
+            <div class="centered">
+                <button id="order-btn" class="btn">ORDER</button>
+                <script src="https://js.stripe.com/clover/stripe.js"></script>
+                <script>
+                    var stripe = Stripe('pk_test_51SJ3szGxGUn1Mznog27npV3eeaFgER66PbC16xTHdCulfR28G3cVUXYNoTUpmpzM32WOtEAWmq9jeJDJho9oECO600dx0b3x3v');
+                    var orderBtn = document.getElementById('order-btn');
+                    orderBtn.addEventListener('click', function() {
+                       window.location.href = "<%= sessionUrl %>";
+                    })
+                </script>
+            </div>
         </main>
         <%- include('../includes/end.ejs') %>

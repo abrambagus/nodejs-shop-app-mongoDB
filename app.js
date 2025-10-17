@@ -9,6 +9,8 @@ const csrf = require("csrf");
 const flash = require("connect-flash");
 const multer = require("multer");
 
+require("dotenv").config();
+
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
@@ -130,6 +132,7 @@ app.use(errorController.get404);
 
 app.use((err, req, res, next) => {
   // res.redirect("/500");
+  console.log("err", err);
   res.status(500).render("500", {
     pageTitle: "Error!",
     path: "/500",
