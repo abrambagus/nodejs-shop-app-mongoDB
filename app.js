@@ -7,6 +7,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const csrf = require("csrf");
 const flash = require("connect-flash");
+const helmet = require("helmet");
 const multer = require("multer");
 
 require("dotenv").config();
@@ -14,8 +15,7 @@ require("dotenv").config();
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
-const MONGODB_URI =
-  "mongodb+srv://abrambagus_db_user:Le8JaOB7qFK7b175@cluster0.d1jikx7.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true&tlsAllowInvalidHostnames=true";
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.d1jikx7.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true&tlsAllowInvalidHostnames=true`;
 
 const app = express();
 const store = MongoStore.create({
@@ -52,6 +52,8 @@ app.set("views", "views");
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
+
+app.use(helmet());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
@@ -143,7 +145,7 @@ app.use((err, req, res, next) => {
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    app.listen(3001);
+    app.listen(process.env.PORT || 3000);
   })
   .catch((err) => {
     console.log(err);
