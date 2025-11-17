@@ -8,6 +8,7 @@ const MongoStore = require("connect-mongo");
 const csrf = require("csrf");
 const flash = require("connect-flash");
 const helmet = require("helmet");
+const compression = require("compression");
 const multer = require("multer");
 
 require("dotenv").config();
@@ -54,6 +55,7 @@ const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
 app.use(helmet());
+app.use(compression());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
